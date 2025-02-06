@@ -1,7 +1,14 @@
 <data transports="http https local" serviceGroup="" serviceNamespace="" name="dataService_mi">
-  <config id="OPT_DS">
+  <!-- <config id="OPT_DS">
     <property name="carbon_datasource_name">OPT_DS</property>
+  </config> -->
+   <config id="OPT_DS">
+    <property name="url" value="#env.DB_URL"/>
+    <property name="username" value="#env.DB_USER"/>
+    <property name="password" value="#env.DB_PASSWORD"/>
+    <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
   </config>
+
   <query id="selectCalc" useConfig="OPT_DS">
     <sql>
       SELECT IdCalculationType, CalculationTypeCode 
