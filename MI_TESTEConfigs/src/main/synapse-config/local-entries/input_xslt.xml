@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<localEntry key="input_xslt" xmlns="http://ws.apache.org/ns/synapse">
+    <xsl:stylesheet version="2.0" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+        <xsl:param name="id"/>
+        <xsl:param name="code"/>
+        <xsl:template match="/">
+            <dat:getCalc xmlns:dat="http://ws.wso2.org/dataservice">
+                <xsl:if test="string-length($id) > 0">
+                    <dat:IdCalculationType>
+                        <xsl:value-of select="$id"/>
+                    </dat:IdCalculationType>
+                </xsl:if>
+                <xsl:if test="string-length($code) > 0">
+                    <dat:CalculationTypeCode>
+                        <xsl:value-of select="$code"/>
+                    </dat:CalculationTypeCode>
+                </xsl:if>
+            </dat:getCalc>
+        </xsl:template>
+    </xsl:stylesheet>
+</localEntry>

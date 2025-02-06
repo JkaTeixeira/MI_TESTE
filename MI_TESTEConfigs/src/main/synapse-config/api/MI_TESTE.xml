@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/REST/MI_TESTE" name="MI_TESTE" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="GET">
+        <inSequence>
+            <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+            <enrich>
+                <source clone="true" type="inline">
+                    <empty/>
+                </source>
+                <target type="body"/>
+            </enrich>
+            <xslt description="input_xslt" key="input_xslt">
+                <property expression="$ctx:query.param.id" name="id"/>
+                <property expression="$ctx:query.param.code" name="code"/>
+            </xslt>
+            <!-- Log do Body antes do envio -->
+            <log level="custom">
+                <property expression="$body" name="Payload Before Call"/>
+            </log>
+            <!-- Chamada para o Data Service -->
+            <call blocking="true">
+                <endpoint>
+                    <http method="post" uri-template="http://localhost:8290/services/dataService_mi">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>1</progressionFactor>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <!-- Log da Resposta -->
+            <log level="custom">
+                <property expression="$body" name="Response"/>
+            </log>
+            <!-- Define a resposta como JSON -->
+            <property name="messageType" scope="axis2" type="STRING" value="application/json"/>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="POST" uri-template="/">
+        <inSequence>
+            <property expression="$ctx:query.param.id" name="id" scope="default" type="INTEGER"/>
+            <property expression="$ctx:query.param.code" name="code" scope="default" type="STRING"/>
+            <payloadFactory media-type="xml">
+                <format>
+                    <dat:getCalc xmlns:dat="http://ws.wso2.org/dataservice">
+                        <dat:IdCalculationType>$1</dat:IdCalculationType>
+                        <dat:CalculationTypeCode>$2</dat:CalculationTypeCode>
+                    </dat:getCalc>
+                </format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:id"/>
+                    <arg evaluator="xml" expression="$ctx:code"/>
+                </args>
+            </payloadFactory>
+            <log level="custom">
+                <property expression="$body" name="body"/>
+            </log>
+            <call blocking="true">
+                <endpoint>
+                    <http method="post" uri-template="http://localhost:8290/services/dataService_mi">
+                        <suspendOnFailure>
+                            <initialDuration>-1</initialDuration>
+                            <progressionFactor>-1</progressionFactor>
+                        </suspendOnFailure>
+                        <markForSuspension>
+                            <retriesBeforeSuspension>0</retriesBeforeSuspension>
+                        </markForSuspension>
+                    </http>
+                </endpoint>
+            </call>
+            <log level="custom">
+                <property expression="$body" name="response"/>
+            </log>
+            <property name="HTTP_SC" scope="axis2" type="STRING" value="200"/>
+            <property name="messageType" scope="axis2" type="STRING" value="application/json"/>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+</api>

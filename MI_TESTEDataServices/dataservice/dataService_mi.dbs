@@ -1,0 +1,26 @@
+<data transports="http https local" serviceGroup="" serviceNamespace="" name="dataService_mi">
+  <config id="OPT_DS">
+    <property name="carbon_datasource_name">OPT_DS</property>
+  </config>
+  <query id="selectCalc" useConfig="OPT_DS">
+    <sql>
+      SELECT IdCalculationType, CalculationTypeCode 
+      FROM ADM.CalculationType 
+      WHERE IdCalculationType = ISNULL(?, IdCalculationType) 
+      AND CalculationTypeCode = ISNULL(?, CalculationTypeCode)
+    </sql>
+    <result rowName="Calc" element="selectCalcOutput">
+      <element name="IdCalculationType" xsdType="integer" column="IdCalculationType" />
+      <element name="CalculationTypeCode" xsdType="string" column="CalculationTypeCode" />
+    </result>
+    <param name="IdCalculationType" sqlType="INTEGER" defaultValue="#{NULL}" />
+    <param name="CalculationTypeCode" sqlType="STRING" defaultValue="#{NULL}" />
+  </query>
+  <operation name="getCalc">
+    <call-query href="selectCalc">
+      <with-param name="IdCalculationType" query-param="IdCalculationType" />
+      <with-param name="CalculationTypeCode" query-param="CalculationTypeCode" />
+    </call-query>
+  </operation>
+
+</data>
