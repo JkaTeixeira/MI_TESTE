@@ -7,7 +7,12 @@
     <property name="username" value="#env.DB_USER"/>
     <property name="password" value="#env.DB_PASSWORD"/>
     <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-  </config>
+    <property name="maxActive" value="50"/>
+    <property name="maxWait" value="60000"/>
+    <property name="testOnBorrow" value="true"/>
+    <property name="validationQuery" value="SELECT 1"/>
+</config>
+
 
   <query id="selectCalc" useConfig="OPT_DS">
     <sql>
